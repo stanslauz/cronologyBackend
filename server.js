@@ -10,7 +10,10 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://cronology.netlify.app"
+    ],
     methods: ["GET", "POST"]
   }
 });
@@ -19,7 +22,13 @@ const PORT = 5000;
 const JWT_SECRET = 'church-event-secret-key';
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://cronology.netlify.app"
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 // In-memory data storage (replace with database in production)
@@ -580,6 +589,16 @@ setInterval(() => {
     }
   });
 }, 1000); // Update every second
+
+// Health check endpoint for container orchestration
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    version: process.env.npm_package_version || '1.0.0'
+  });
+});
 
 server.listen(PORT, () => {
   console.log(`Church Event Management Server running on http://localhost:${PORT}`);

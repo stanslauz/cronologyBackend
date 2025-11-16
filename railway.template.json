@@ -1,0 +1,25 @@
+{
+  "name": "Church Event Management System",
+  "description": "Complete church event time management and display system with admin portal",
+  "build": {
+    "builder": "DOCKERFILE"
+  },
+  "deploy": {
+    "healthcheckPath": "/api/health",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3
+  },
+  "environments": {
+    "production": {
+      "variables": {
+        "NODE_ENV": "production",
+        "PORT": "${{RAILWAY_PORT}}",
+        "JWT_SECRET": "${{JWT_SECRET}}"
+      }
+    }
+  },
+  "scaling": {
+    "minReplicas": 1,
+    "maxReplicas": 3
+  }
+}
